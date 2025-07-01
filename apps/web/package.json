@@ -1,0 +1,53 @@
+{
+  "name": "@taskcore/web",
+  "version": "1.0.0",
+  "description": "TaskCore Web Application",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@taskcore/shared": "workspace:*",
+    "next": "14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@next/font": "14.0.4",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "tailwindcss": "^3.3.6",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "clsx": "^2.0.0",
+    "socket.io-client": "^4.7.4",
+    "axios": "^1.6.2",
+    "react-hook-form": "^7.48.2",
+    "react-hot-toast": "^2.4.1",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dropzone": "^14.2.3",
+    "date-fns": "^2.30.0",
+    "zustand": "^4.4.7",
+    "framer-motion": "^10.16.16",
+    "lucide-react": "^0.294.0",
+    "konva": "^9.2.0",
+    "react-konva": "^18.2.10",
+    "@tiptap/react": "^2.1.13",
+    "@tiptap/starter-kit": "^2.1.13",
+    "@tiptap/extension-collaboration": "^2.1.13",
+    "@tiptap/extension-collaboration-cursor": "^2.1.13",
+    "yjs": "^13.6.10",
+    "y-websocket": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.4",
+    "@types/react": "^18.2.38",
+    "@types/react-dom": "^18.2.17",
+    "@types/react-beautiful-dnd": "^13.1.8",
+    "typescript": "^5.3.2",
+    "eslint": "^8.54.0",
+    "eslint-config-next": "14.0.4"
+  }
+}
