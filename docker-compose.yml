@@ -66,8 +66,33 @@ services:
       - "8888:8888"
     volumes:
       - ./uploads:/app/uploads
+      - ./services/paddleocr/logs:/app/logs
     environment:
       - PYTHONUNBUFFERED=1
+      - PADDLEOCR_LANG=en
+      - PADDLEOCR_USE_GPU=false
+      - LOG_LEVEL=INFO
+
+  # PaddleOCR MCP Server
+  paddleocr-mcp:
+    build:
+      context: ./services/paddleocr
+      dockerfile: Dockerfile.mcp
+    ports:
+      - "8889:8889"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./services/paddleocr/logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PADDLEOCR_LANG=en
+      - PADDLEOCR_USE_GPU=false
+      - PADDLEOCR_USE_ANGLE_CLS=true
+      - MCP_SERVER_PORT=8889
+      - LOG_LEVEL=INFO
+    depends_on:
+      - paddleocr
+    restart: unless-stopped
 
   # API Gateway
   nginx:
