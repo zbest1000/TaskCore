@@ -1,0 +1,51 @@
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgcc-s1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create necessary directories
+RUN mkdir -p /app/uploads /app/logs /app/models
+
+# Copy application files
+COPY mcp_server.py .
+COPY mcp_client.py .
+COPY app.py .
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PADDLEOCR_LANG=en
+ENV PADDLEOCR_USE_GPU=false
+ENV PADDLEOCR_USE_ANGLE_CLS=true
+ENV MCP_SERVER_PORT=8889
+ENV LOG_LEVEL=INFO
+
+# Create non-root user for security
+RUN useradd -m -u 1000 paddleocr && \
+    chown -R paddleocr:paddleocr /app
+USER paddleocr
+
+# Health check for MCP server
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD python -c "import asyncio; import sys; sys.exit(0)"
+
+# Expose MCP server port
+EXPOSE 8889
+
+# Default command to run MCP server
+CMD ["python", "mcp_server.py"]

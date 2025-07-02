@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  paddleocr-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: paddleocr-api
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PADDLEOCR_LANG=en
+      - PADDLEOCR_USE_GPU=false
+      - PADDLEOCR_USE_ANGLE_CLS=true
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  paddleocr-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: paddleocr-mcp
+    ports:
+      - "8889:8889"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PADDLEOCR_LANG=en
+      - PADDLEOCR_USE_GPU=false
+      - PADDLEOCR_USE_ANGLE_CLS=true
+      - MCP_SERVER_PORT=8889
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    depends_on:
+      - paddleocr-api
+    command: ["python", "mcp_server.py"]
+
+volumes:
+  paddleocr_uploads:
+    driver: local
+  paddleocr_logs:
+    driver: local
+
+networks:
+  default:
+    name: paddleocr-network

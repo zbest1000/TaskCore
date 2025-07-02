@@ -1,0 +1,196 @@
+# PaddleOCR MCP Server Configuration
+
+# Server Configuration
+server:
+  name: "paddleocr-mcp"
+  version: "3.1.0"
+  host: "0.0.0.0"
+  port: 8889
+  debug: false
+  log_level: "INFO"
+
+# OCR Engine Configuration
+ocr:
+  # Default language for OCR processing
+  default_language: "en"
+  
+  # Supported languages
+  supported_languages:
+    - "en"    # English
+    - "ch"    # Chinese (Simplified)
+    - "fr"    # French
+    - "german" # German
+    - "korean" # Korean
+    - "japan"  # Japanese
+    - "ar"     # Arabic
+    - "es"     # Spanish
+    - "pt"     # Portuguese
+    - "ru"     # Russian
+  
+  # Engine settings
+  use_angle_cls: true
+  use_gpu: false
+  show_log: false
+  
+  # Performance settings
+  max_batch_size: 10
+  timeout: 30
+  max_image_size: 10485760  # 10MB
+
+# MCP Protocol Configuration
+mcp:
+  # Protocol version
+  protocol_version: "2025-03-26"
+  
+  # Available tools
+  tools:
+    - name: "extract_text_from_image"
+      enabled: true
+      description: "Extract text from an image using PaddleOCR"
+      
+    - name: "batch_extract_text"
+      enabled: true
+      description: "Extract text from multiple images in batch"
+      
+    - name: "analyze_document_structure"
+      enabled: true
+      description: "Analyze document structure including layout, tables, and text regions"
+      
+    - name: "get_ocr_info"
+      enabled: true
+      description: "Get information about PaddleOCR capabilities and configuration"
+  
+  # Resource endpoints
+  resources:
+    - uri: "paddleocr://info"
+      name: "PaddleOCR Information"
+      enabled: true
+      
+    - uri: "paddleocr://models"
+      name: "Available OCR Models"
+      enabled: true
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "/app/logs/paddleocr-mcp.log"
+  max_size: "10MB"
+  backup_count: 5
+  console: true
+
+# Storage Configuration
+storage:
+  uploads_dir: "/app/uploads"
+  logs_dir: "/app/logs"
+  models_dir: "/app/models"
+  temp_dir: "/tmp/paddleocr"
+  
+  # Cleanup settings
+  auto_cleanup: true
+  temp_file_ttl: 3600  # 1 hour
+
+# Security Configuration
+security:
+  max_file_size: 10485760  # 10MB
+  allowed_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".gif"
+    - ".bmp"
+    - ".tiff"
+    - ".webp"
+  
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+  
+  input_validation:
+    enabled: true
+    sanitize_paths: true
+
+# Performance Configuration
+performance:
+  # Worker configuration
+  max_workers: 4
+  
+  # Memory management
+  max_memory_usage: "2GB"
+  
+  # Cache settings
+  enable_cache: true
+  cache_size: 100
+  cache_ttl: 3600
+
+# Integration Configuration
+integration:
+  # Claude Desktop
+  claude_desktop:
+    enabled: true
+    config_path: "~/.config/claude/mcp_servers.json"
+    
+  # Cursor IDE
+  cursor:
+    enabled: true
+    config_path: "~/.cursor/mcp_servers.json"
+    
+  # LiteLLM Proxy
+  litellm:
+    enabled: true
+    base_url: "http://localhost:4000"
+    
+  # Docker Compose
+  docker:
+    enabled: true
+    network: "paddleocr-network"
+
+# Environment-specific configurations
+environments:
+  development:
+    debug: true
+    log_level: "DEBUG"
+    auto_reload: true
+    
+  production:
+    debug: false
+    log_level: "INFO"
+    auto_reload: false
+    
+  testing:
+    debug: true
+    log_level: "DEBUG"
+    use_mock_data: true
+
+# Model Configuration
+models:
+  pp_ocrv5:
+    type: "lightweight"
+    size: "8.1MB"
+    accuracy: "high"
+    languages: ["en", "ch", "fr", "german", "korean", "japan"]
+    
+  pp_structurev3:
+    type: "document_parsing"
+    size: "155MB"
+    accuracy: "very_high"
+    capabilities: ["layout_analysis", "table_recognition", "formula_recognition"]
+
+# Monitoring Configuration
+monitoring:
+  enabled: true
+  metrics:
+    - "request_count"
+    - "processing_time"
+    - "error_rate"
+    - "memory_usage"
+    - "cpu_usage"
+  
+  health_check:
+    enabled: true
+    interval: 30
+    timeout: 10
+    
+  prometheus:
+    enabled: false
+    port: 9090
